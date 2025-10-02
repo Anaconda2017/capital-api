@@ -1,0 +1,41 @@
+name: capital-insurance
+services:
+  - name: web
+    type: web
+    source:
+      type: git
+      repository: https://github.com/your-username/capital-insurance.git
+      branch: main
+    build:
+      type: dockerfile
+      dockerfile_path: Dockerfile
+    run:
+      command: php artisan serve --host=0.0.0.0 --port=8000
+      env:
+        - APP_ENV=production
+        - APP_DEBUG=false
+        - APP_KEY=${APP_KEY}
+        - DB_CONNECTION=mysql
+        - DB_HOST=${DB_HOST}
+        - DB_PORT=${DB_PORT}
+        - DB_DATABASE=${DB_DATABASE}
+        - DB_USERNAME=${DB_USERNAME}
+        - DB_PASSWORD=${DB_PASSWORD}
+        - JWT_SECRET=${JWT_SECRET}
+        - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
+        - MAIL_FROM_NAME=${MAIL_FROM_NAME}
+    domains:
+      - capital-insurance.koyeb.app
+    regions:
+      - fra
+    instance:
+      type: nano
+      min_scale: 1
+      max_scale: 3
+    healthcheck:
+      path: /
+      port: 8000
+      initial_delay: 30
+      interval: 10
+      timeout: 5
+      max_failures: 3
