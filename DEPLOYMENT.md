@@ -1,12 +1,14 @@
-# Koyeb deployment configuration for Capital Insurance
+# Coolify/Koyeb deployment configuration for Capital Insurance
 
 ## Environment Variables Required
 
-Before deploying to Koyeb, make sure to set these environment variables in your Koyeb dashboard:
+Before deploying to Coolify/Koyeb, make sure to set these environment variables in your dashboard:
 
 ### Application Settings
 - `APP_KEY` - Laravel application key (generate with: php artisan key:generate)
-- `APP_URL` - Your application URL (e.g., https://your-app.koyeb.app)
+- `APP_URL` - Your application URL (e.g., https://your-app.coolify.app)
+- `APP_ENV` - Set to `production`
+- `APP_DEBUG` - Set to `false`
 
 ### Database Settings
 - `DB_HOST` - Database host (use Koyeb's managed database or external)
@@ -23,6 +25,31 @@ Before deploying to Koyeb, make sure to set these environment variables in your 
 - `MAIL_FROM_NAME` - Name for email sender
 
 ## Deployment Steps
+
+### For Coolify Deployment
+
+1. **Push to GitHub**
+   ```bash
+   git add .
+   git commit -m "Prepare for Coolify deployment"
+   git push origin main
+   ```
+
+2. **Connect to Coolify**
+   - Go to your Coolify dashboard
+   - Create a new application
+   - Connect your GitHub repository
+   - Select the main branch
+
+3. **Configure Environment Variables**
+   - Add all required environment variables in Coolify dashboard
+   - Make sure to set `APP_ENV=production` and `APP_DEBUG=false`
+
+4. **Deploy**
+   - Coolify will automatically build and deploy your application
+   - Monitor the build logs for any issues
+
+### For Koyeb Deployment
 
 1. **Push to GitHub**
    ```bash

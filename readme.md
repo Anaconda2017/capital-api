@@ -1,165 +1,168 @@
-# Capital Insurance - نظام التأمين الرقمي
+# Capital Insurance - Laravel Application
 
-نظام إدارة التأمين الشامل الذي يوفر خدمات التأمين المختلفة مع واجهة ويب حديثة و API متكامل.
+## Overview
+This is a Laravel-based insurance management system with multi-language support (Arabic/English) and comprehensive insurance services including motor, medical, building, and job insurance.
 
-## المميزات الرئيسية
+## Features
+- Multi-language support (Arabic/English)
+- Motor Insurance Management
+- Medical Insurance Management
+- Building Insurance Management
+- Job Insurance Management
+- Claims Management
+- User Authentication with JWT
+- File Upload System
+- Email Notifications
+- Admin Dashboard
 
-- 🏠 **تأمين المباني** - حماية شاملة للمباني والمنشآت
-- 🚗 **تأمين المركبات** - تأمين شامل للمركبات والسيارات
-- 🏥 **التأمين الطبي** - خدمات التأمين الصحي
-- 💼 **تأمين الوظائف** - حماية مهنية شاملة
-- 📱 **واجهة متعددة اللغات** - دعم العربية والإنجليزية
-- 🔐 **نظام مصادقة آمن** - JWT Authentication
-- 📊 **لوحة تحكم إدارية** - إدارة شاملة للنظام
-- 📧 **نظام إشعارات** - تنبيهات فورية للعملاء
-
-## التقنيات المستخدمة
-
+## Technology Stack
 - **Backend**: Laravel 8.x
-- **Frontend**: HTML5, CSS3, JavaScript, Bootstrap
 - **Database**: MySQL
 - **Authentication**: JWT (tymon/jwt-auth)
 - **Image Processing**: Intervention Image
-- **Localization**: Laravel Localization
-- **API**: RESTful API
+- **Localization**: mcamara/laravel-localization
+- **Frontend**: Blade Templates with Bootstrap
 
-## متطلبات النظام
-
-- PHP >= 7.3 أو PHP 8.0+
+## Requirements
+- PHP 8.0 or higher
+- MySQL 5.7 or higher
 - Composer
-- MySQL 5.7+ أو MariaDB 10.2+
-- Node.js & NPM (للتطوير)
-- Web Server (Apache/Nginx)
+- Node.js & NPM (for frontend assets)
 
-## التثبيت والتشغيل
+## Installation
 
-### 1. استنساخ المشروع
+### Local Development
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/capital-insurance.git
+   cd capital-insurance
+   ```
+
+2. **Install PHP dependencies**
+   ```bash
+   composer install
+   ```
+
+3. **Install Node.js dependencies**
+   ```bash
+   npm install
+   ```
+
+4. **Environment setup**
+   ```bash
+   cp env.example .env
+   php artisan key:generate
+   ```
+
+5. **Database setup**
+   ```bash
+   php artisan migrate
+   php artisan db:seed
+   ```
+
+6. **Storage setup**
+   ```bash
+   php artisan storage:link
+   ```
+
+7. **Start development server**
+   ```bash
+   php artisan serve
+   ```
+
+### Production Deployment
+
+#### Using Docker
 ```bash
-git clone https://github.com/your-username/capital-insurance.git
-cd capital-insurance
+docker-compose up -d
 ```
 
-### 2. تثبيت التبعيات
-```bash
-composer install
-npm install
+#### Using Coolify/Koyeb
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
+
+## Environment Variables
+
+### Required Variables
+- `APP_KEY` - Laravel application key
+- `APP_URL` - Application URL
+- `DB_HOST` - Database host
+- `DB_DATABASE` - Database name
+- `DB_USERNAME` - Database username
+- `DB_PASSWORD` - Database password
+- `JWT_SECRET` - JWT secret key
+
+### Optional Variables
+- `MAIL_HOST` - SMTP host
+- `MAIL_USERNAME` - SMTP username
+- `MAIL_PASSWORD` - SMTP password
+- `AWS_ACCESS_KEY_ID` - AWS access key
+- `AWS_SECRET_ACCESS_KEY` - AWS secret key
+- `AWS_BUCKET` - AWS S3 bucket name
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/login` - User login
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/logout` - User logout
+- `POST /api/auth/refresh` - Refresh token
+
+### Insurance Services
+- `GET /api/motor-insurance` - Get motor insurance
+- `POST /api/motor-insurance` - Create motor insurance
+- `GET /api/medical-insurance` - Get medical insurance
+- `POST /api/medical-insurance` - Create medical insurance
+- `GET /api/building-insurance` - Get building insurance
+- `POST /api/building-insurance` - Create building insurance
+- `GET /api/job-insurance` - Get job insurance
+- `POST /api/job-insurance` - Create job insurance
+
+### Claims
+- `GET /api/claims` - Get all claims
+- `POST /api/claims` - Create new claim
+- `GET /api/claims/{id}` - Get specific claim
+- `PUT /api/claims/{id}` - Update claim
+- `DELETE /api/claims/{id}` - Delete claim
+
+## File Structure
+```
+app/
+├── Http/Controllers/     # API Controllers
+├── Models/              # Eloquent Models
+├── Providers/           # Service Providers
+└── ...
+
+config/
+├── app.php              # Application configuration
+├── database.php         # Database configuration
+├── jwt.php             # JWT configuration
+└── ...
+
+database/
+├── migrations/         # Database migrations
+└── seeders/           # Database seeders
+
+public/
+├── uploads/           # Uploaded files
+└── ...
+
+resources/
+├── views/             # Blade templates
+├── lang/              # Language files
+└── ...
 ```
 
-### 3. إعداد متغيرات البيئة
-```bash
-cp .env.example .env
-php artisan key:generate
-```
+## Contributing
 
-### 4. إعداد قاعدة البيانات
-```bash
-php artisan migrate
-php artisan db:seed
-```
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-### 5. تشغيل المشروع
-```bash
-php artisan serve
-```
+## License
+This project is licensed under the MIT License.
 
-## إعداد متغيرات البيئة
-
-قم بتعديل ملف `.env` مع الإعدادات التالية:
-
-```env
-APP_NAME="Capital Insurance"
-APP_ENV=production
-APP_KEY=base64:your-generated-key
-APP_DEBUG=false
-APP_URL=https://your-domain.com
-
-DB_CONNECTION=mysql
-DB_HOST=your-db-host
-DB_PORT=3306
-DB_DATABASE=your-database-name
-DB_USERNAME=your-username
-DB_PASSWORD=your-password
-
-JWT_SECRET=your-jwt-secret
-```
-
-## النشر على Koyeb
-
-### 1. إعداد ملف koyeb.yaml
-تم إنشاء ملف `koyeb.yaml` في جذر المشروع مع الإعدادات المطلوبة.
-
-### 2. متغيرات البيئة المطلوبة في Koyeb
-- `APP_KEY`
-- `DB_HOST`
-- `DB_DATABASE`
-- `DB_USERNAME`
-- `DB_PASSWORD`
-- `JWT_SECRET`
-
-### 3. نشر المشروع
-```bash
-# رفع المشروع على GitHub أولاً
-git add .
-git commit -m "Initial commit"
-git push origin main
-
-# ثم ربط المشروع مع Koyeb من خلال لوحة التحكم
-```
-
-## هيكل المشروع
-
-```
-├── app/
-│   ├── Http/Controllers/     # Controllers
-│   ├── Models/              # Eloquent Models
-│   └── Providers/           # Service Providers
-├── config/                  # Configuration files
-├── database/
-│   ├── migrations/          # Database migrations
-│   └── seeders/            # Database seeders
-├── public/                 # Public assets
-├── resources/
-│   ├── views/              # Blade templates
-│   └── lang/               # Language files
-└── routes/                 # Route definitions
-```
-
-## API Documentation
-
-### Authentication Endpoints
-- `POST /api/auth/login` - تسجيل الدخول
-- `POST /api/auth/register` - إنشاء حساب جديد
-- `POST /api/auth/logout` - تسجيل الخروج
-- `POST /api/auth/refresh` - تجديد التوكن
-
-### Insurance Endpoints
-- `GET /api/insurance/building` - قائمة تأمين المباني
-- `POST /api/insurance/building/request` - طلب تأمين مبنى
-- `GET /api/insurance/motor` - قائمة تأمين المركبات
-- `POST /api/insurance/motor/request` - طلب تأمين مركبة
-
-## المساهمة
-
-1. Fork المشروع
-2. إنشاء فرع للميزة الجديدة (`git checkout -b feature/AmazingFeature`)
-3. Commit التغييرات (`git commit -m 'Add some AmazingFeature'`)
-4. Push للفرع (`git push origin feature/AmazingFeature`)
-5. فتح Pull Request
-
-## الترخيص
-
-هذا المشروع مرخص تحت رخصة MIT - راجع ملف [LICENSE](LICENSE) للتفاصيل.
-
-## الدعم
-
-للحصول على الدعم، يرجى التواصل عبر:
-- البريد الإلكتروني: support@capital-insurance.com
-- GitHub Issues: [فتح issue جديد](https://github.com/your-username/capital-insurance/issues)
-
-## التحديثات المستقبلية
-
-- [ ] تطبيق موبايل
-- [ ] نظام دفع إلكتروني
-- [ ] تقارير متقدمة
-- [ ] تكامل مع شركات التأمين الخارجية
-- [ ] نظام إشعارات push
+## Support
+For support, email support@capital-insurance.com or create an issue in the repository.

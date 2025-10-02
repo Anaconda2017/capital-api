@@ -1,11 +1,11 @@
-# Use PHP 8.0 as base image
-FROM php:8.0-fpm
+# Use PHP 8.1 as base image
+FROM php:8.1-fpm-alpine
 
 # Set working directory
 WORKDIR /var/www/html
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     git \
     curl \
     libpng-dev \
@@ -14,19 +14,18 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     libzip-dev \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libmcrypt-dev \
-    libgd-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
     libwebp-dev \
-    jpegoptim optipng pngquant gifsicle \
+    jpegoptim \
+    optipng \
+    pngquant \
+    gifsicle \
     vim \
     unzip \
     git \
-    curl
-
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+    curl \
+    mysql-client
 
 # Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
@@ -38,14 +37,12 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy existing application directory contents
 COPY . /var/www/html
 
-# Copy existing application directory permissions
-COPY --chown=www-data:www-data . /var/www/html
-
-# Change current user to www
-USER www-data
+# Set proper permissions
+RUN chown -R www-data:www-data /var/www/html
+RUN chmod -R 755 /var/www/html
 
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Create storage directories and set permissions
 RUN mkdir -p storage/app/public \
@@ -55,22 +52,33 @@ RUN mkdir -p storage/app/public \
     storage/logs \
     bootstrap/cache
 
-# Set permissions
+# Set permissions for storage and bootstrap
 RUN chmod -R 775 storage bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-# Copy .env.example to .env if .env doesn't exist
+# Copy .env.production to .env if .env doesn't exist
 RUN if [ ! -f .env ]; then cp env.example .env; fi
 
-# Generate application key
-RUN php artisan key:generate --force
+# Generate application key if not set
+RUN php artisan key:generate --force || true
 
-# Optimize Laravel
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
+# Clear and cache config
+RUN php artisan config:clear || true
+RUN php artisan config:cache || true
+
+# Clear and cache routes
+RUN php artisan route:clear || true
+RUN php artisan route:cache || true
+
+# Clear and cache views
+RUN php artisan view:clear || true
+RUN php artisan view:cache || true
 
 # Expose port 8000
 EXPOSE 8000
+
+# Switch to www-data user
+USER www-data
 
 # Start PHP-FPM
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

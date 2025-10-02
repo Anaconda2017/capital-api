@@ -36,7 +36,7 @@ services:
         - SESSION_DRIVER=file
         - QUEUE_CONNECTION=sync
     domains:
-      - capital-insurance.koyeb.app
+      - capital-insurance.coolify.app
     regions:
       - fra
     instance:
