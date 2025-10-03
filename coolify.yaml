@@ -1,52 +1,48 @@
-name: capital-insurance
+# Coolify deployment configuration for Capital Insurance
+# This file is used by Coolify to build and deploy your application.
+
+version: '3.8'
 services:
-  - name: web
-    type: web
-    source:
-      type: git
-      repository: https://github.com/your-username/capital-insurance.git
-      branch: main
+  web:
     build:
-      type: dockerfile
-      dockerfile_path: Dockerfile
-    run:
-      command: php artisan serve --host=0.0.0.0 --port=8000
-      env:
-        - APP_ENV=production
-        - APP_DEBUG=false
-        - APP_KEY=${APP_KEY}
-        - APP_URL=${APP_URL}
-        - DB_CONNECTION=mysql
-        - DB_HOST=${DB_HOST}
-        - DB_PORT=${DB_PORT}
-        - DB_DATABASE=${DB_DATABASE}
-        - DB_USERNAME=${DB_USERNAME}
-        - DB_PASSWORD=${DB_PASSWORD}
-        - JWT_SECRET=${JWT_SECRET}
-        - MAIL_MAILER=smtp
-        - MAIL_HOST=${MAIL_HOST}
-        - MAIL_PORT=${MAIL_PORT}
-        - MAIL_USERNAME=${MAIL_USERNAME}
-        - MAIL_PASSWORD=${MAIL_PASSWORD}
-        - MAIL_ENCRYPTION=tls
-        - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
-        - MAIL_FROM_NAME=${MAIL_FROM_NAME}
-        - LOG_LEVEL=error
-        - CACHE_DRIVER=file
-        - SESSION_DRIVER=file
-        - QUEUE_CONNECTION=sync
-    domains:
-      - capital-insurance.coolify.app
-    regions:
-      - fra
-    instance:
-      type: nano
-      min_scale: 1
-      max_scale: 3
+      context: .
+      dockerfile: Dockerfile
+    image: capital-insurance-app
+    container_name: capital-insurance-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    ports:
+      - "80" # Expose port 80 for the Laravel application
+    environment:
+      # These environment variables should be set in your Coolify dashboard
+      # and will override any values in the .env file during deployment.
+      APP_ENV: production
+      APP_DEBUG: false
+      APP_KEY: ${APP_KEY}
+      APP_URL: ${APP_URL}
+      DB_CONNECTION: mysql
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      MAIL_MAILER: smtp
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_ENCRYPTION: tls
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME}
+      LOG_LEVEL: error
+      CACHE_DRIVER: file
+      SESSION_DRIVER: file
+      QUEUE_CONNECTION: sync
+    # Healthcheck configuration for Coolify
     healthcheck:
-      path: /
-      port: 8000
-      initial_delay: 60
-      interval: 30
-      timeout: 10
-      max_failures: 3
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s

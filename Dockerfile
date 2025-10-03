@@ -1,8 +1,11 @@
-# Use PHP 8.0 as base image
-FROM php:8.0-fpm
+# Use PHP 8.0 with Apache as base image for better stability
+FROM php:8.0-apache
 
 # Set working directory
 WORKDIR /var/www/html
+
+# Enable Apache mod_rewrite
+RUN a2enmod rewrite
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -17,11 +20,12 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libwebp-dev \
+    vim \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+# Install PHP extensions with optimized flags
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j$(nproc) pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -66,11 +70,19 @@ RUN php artisan route:cache || true
 RUN php artisan view:clear || true
 RUN php artisan view:cache || true
 
-# Expose port 8000
-EXPOSE 8000
+# Configure Apache
+RUN echo '<VirtualHost *:80>\n\
+    DocumentRoot /var/www/html/public\n\
+    <Directory /var/www/html/public>\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+    ErrorLog ${APACHE_LOG_DIR}/error.log\n\
+    CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
-# Switch to www-data user
-USER www-data
+# Expose port 80
+EXPOSE 80
 
-# Start PHP-FPM
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+# Start Apache
+CMD ["apache2-foreground"]
